@@ -1,0 +1,46 @@
+1. For each problem, state its goal in your own words and describe your approach to solve the 
+problem along with any issues you encountered and if/how you managed to solve those issues.
+
+[Problem 1 (Understanding j--)]
+
+Goal: Write a program following the steps. See what token is supported in j--. And then extend the j-- by adding the not supported tokens.
+
+Approach: Write the program as that I usually would do. Compile the program and found / and != not supported. Did it other way, and found out '<=' '+=' not supported. So went back to the first version, since I see I need to add '/'. I moved on to other problem to add / and other operators. Then I added !=, base on '==', followed similar format. Then the program worked
+
+[Problem 2 (Understanding the JVM)]
+
+Goal: Write a program that use the CLEmitter interface to generate the byte code for a file
+
+Approach: Looked at the example of JVM code Generation on GenFactorial.java, which is on the lecture slide, as a reference. Followed the assignment's hint slides step by step. Got stuck at not knowing how to branch to a label. Then I went to the CLemitter.java and search "branch" in the file, then found public void addBranchInstruction() is the method need to use, cause its comment says "Adds a branch instruction.". But in oder to use it, I still need to know what each opcode of the instruction definition. Searched online and found a link "https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5", looked for each opcode definition. 
+
+[Problem 3 (Arithmetic Operators)]
+
+Goal: To extend the j-- to support three new arithmetic operators which are '/','%','+';
+
+Approach: Followed the assignment's hint slides step by step. First I did '/',  looked at the lecture note to copy it over. Then did '%', followed '/' 's similar format. For '+' ,followed '-' similar format.
+
+[Problem 4 (Conditional Expression)]
+
+Goal: To implement the conditional operator (e ? e1 : e2) in j-- .
+
+Approach: Followed the assignment's hint slides step by step. Have issue on Define a method private JExpression conditionalExpression(). My approach is to look at similar method such as conditionalAndExpression() and some other one. Tried a few things and then got it to work. Have issue on JConditionalExpression.analyze() and JConditionalExpression.codegen(). First I look at different ...Expression.java file to see the Semantic analysis and code generation. Know the format, and try a couple different things to get it to work. 
+
+[Problem 5 (Do Statement)]
+
+Goal: To add support for the do statement to the j-- .
+
+Approach: Followed the assignment's hint slides step by step. Looked at the JWhileStatement.java file as a reference when doing the Semantic analysis and Code generation.
+
+2. Did you receive any help? List the sources along with a short description of the help received.
+
+Source                               Help Received
+------                               -------------
+
+TA                                   Problem 1, not able to run the file
+Lecture Slides                       Many problems. Use it as reference due to many problem use similar format.
+Online 				     To see the parameters' and instructions' definition and how to use it. https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5
+
+3. List any other comments here. Feel free to provide any feedback on how much you learned from
+doing the assignment, and whether you enjoyed doing it.
+
+I feel like this was a medium to hard assignment. Most of adding support or extend the j--, I looked at other already j-- files and copy the most similar one, and then modify the part to match the hint slides' instruction. A few times, I tried random things until I got the test file to worked. I now know more of how the JVM work and The Scanner->Parser->Semantics ->Codegen. I found the Scanner and Parser is straightforward, but the semantics and codegen part were hard. I feel that I need to work more on those areas.
