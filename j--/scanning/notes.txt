@@ -1,0 +1,36 @@
+1. For each problem, state its goal in your own words and describe your approach to solve the 
+problem along with any issues you encountered and if/how you managed to solve those issues.
+
+[Problem 1 (Multiline Comment)]
+
+Goal: Add support to found and ignore multiple lines of comments. The goal to to know how to add multiline comments which the comment got ignores.
+
+Approach: In the getNextToken() method, search"/". Then add, when encountered "/" then check nextCh if it is "*", if it is then it enter a comment mode, then continue to ignore the characters until "*" follows with "/". If End of File then report a error in the console.
+
+[Problem 2 (Reserved Words)]
+
+Goal: Add support to Reserved Words. The goal is to know how to add Reserved Words.
+
+Approach:  In the file TokenInfo.TokenKind, add all the reserved words with the same name in the the Java Lite Language Specification.
+
+[Problem 3 (Operators)]
+
+Goal: Add support to Operators. The goal is to know how to add Operators.
+
+Approach: Define the tokens in TokenInfo.TokenKind following the same name of the Java Lite Language Specification. Then Scan the token in Scanner.getNextToken().
+
+[Problem 4 (Literals)]
+
+Goal: Add support for scanning different types of numeric literals -  integers, long integers, and double, without using any regular expression libraries.
+
+Approach: Define tokens LONG_LITERAL and DOUBLE_LITERAL in the TokenInfo.TokenKind. Then implement helper methods in Scanner.java. Then in the Scanner.getNextToken(), add scan the digits first. then look at what char come next. If it is a 'L', then the number is a long. If it a '.', or a 'e', or a 'd', then is double. If no have these things, then is just int. 
+
+2. Did you receive any help? List the sources along with a short description of the help received.
+
+Source                               Help Received
+------                               -------------
+
+3. List any other comments here. Feel free to provide any feedback on how much you learned from
+doing the assignment, and whether you enjoyed doing it.
+
+This one is easier than the first assignment. I feel I had a better handle on the concepts this time. Building the scanner felt more straightforward because the logic for the tokens. I could see the direct relationship between the code I was writing and the tokens it was supposed to recognize. 

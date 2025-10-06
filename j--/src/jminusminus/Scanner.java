@@ -77,6 +77,32 @@ class Scanner {
         // Prime the pump.
         nextCh();
     }
+     // Scans and returns a string of digits.
+    private String digits() {
+        StringBuilder buffer = new StringBuilder();
+        while (isDigit(ch)) {
+            buffer.append(ch);
+            nextCh();
+        }
+        return buffer.toString();
+    }
+
+    // Scans and returns an exponent.
+    private String exponent() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(ch);
+        nextCh();
+        if (ch == '+' || ch == '-') {
+            buffer.append(ch);
+            nextCh();
+        }
+        if (!isDigit(ch)) {
+            reportScannerError("malformed exponent in literal", ch);
+            return buffer.toString();
+        }
+        buffer.append(digits());
+        return buffer.toString();
+    }
 
     /**
      * Scans and returns the next token from input.
@@ -97,7 +123,32 @@ class Scanner {
                     while (ch != '\n' && ch != EOFCH) {
                         nextCh();
                     }
-                } else {
+                } else if (ch == '*') {
+                    boolean inComment = true;
+                    // process comment until reaching */
+                    nextCh();
+                    
+                        while (inComment && ch != EOFCH) {
+                            if (ch == '*') {
+                            nextCh();
+                            if (ch == '/') {
+                                nextCh();
+                                break;
+                            }
+                        } else {
+                            nextCh();
+                        }
+                    }
+                    if (inComment == true) {
+                        reportScannerError("comments must be skipped");
+                    }
+                }
+                else if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(DIV_ASSIGN,line);
+                }
+                    
+                 else {
                     return new TokenInfo(DIV,line);
                 }
             } else {
@@ -140,15 +191,34 @@ class Scanner {
             case '?':
                 nextCh();
                 return new TokenInfo(QUESTION,line);
+            case '|':
+                nextCh();
+                if (ch == '|') {
+                    nextCh();
+                    return new TokenInfo(LOR, line);
+                } else {
+                    reportScannerError("operator | is not supported in j--");
+                    return getNextToken();
+                }
             case '%':
             nextCh();
-            return new TokenInfo(REM,line);
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(REM_ASSIGN, line);
+                } 
+                else {
+                    return new TokenInfo(REM,line);
+                }
             case '-':
                 nextCh();
                 if (ch == '-') {
                     nextCh();
                     return new TokenInfo(DEC, line);
-                } else {
+                } else if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(MINUS_ASSIGN, line);
+                } 
+                else {
                     return new TokenInfo(MINUS, line);
                 }
             case '+':
@@ -164,7 +234,13 @@ class Scanner {
                 }
             case '*':
                 nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(STAR_ASSIGN, line);
+                }
+                 else {
                 return new TokenInfo(STAR, line);
+                }
             case '=':
                 nextCh();
                 if (ch == '=') {
@@ -175,21 +251,26 @@ class Scanner {
                 }
             case '>':
                 nextCh();
-                return new TokenInfo(GT, line);
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(GE, line);
+                } else {
+                    return new TokenInfo(GT, line);
+                }
+                
             case '<':
                 nextCh();
                 if (ch == '=') {
                     nextCh();
                     return new TokenInfo(LE, line);
                 } else {
-                    reportScannerError("operator < is not supported in j--");
-                    return getNextToken();
+                    return new TokenInfo(LT, line);
                 }
             case '!':
                 nextCh();
                 if(ch== '=') {
                     nextCh();
-                    return new TokenInfo(NE,line);
+                    return new TokenInfo(NOT_EQUAL,line);
                 }
                 else{
                     return new TokenInfo(LNOT,line);
@@ -260,11 +341,56 @@ class Scanner {
             case '8':
             case '9':
                 buffer = new StringBuilder();
-                while (isDigit(ch)) {
-                    buffer.append(ch);
+                if (isDigit(ch)) {
+                    buffer.append(digits());
+                    if (ch == 'l' || ch == 'L') {
+                        buffer.append(ch);
+                        nextCh();
+                        return new TokenInfo(LONG_LITERAL, buffer.toString(), line);
+                    } else if (ch == '.') {
+                        buffer.append(ch);
+                        nextCh();
+                        if (isDigit(ch)) {
+                            buffer.append(digits());
+                        }
+                        if (ch == 'e' || ch == 'E') {
+                            buffer.append(exponent());
+                        }
+                        if (ch == 'd' || ch == 'D') {
+                            buffer.append(ch);
+                            nextCh();
+                        }
+                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+                    } else if (ch == 'e' || ch == 'E') {
+                        buffer.append(exponent());
+                        if (ch == 'd' || ch == 'D') {
+                            buffer.append(ch);
+                            nextCh();
+                        }
+                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+                    } else if (ch == 'd' || ch == 'D') {
+                        buffer.append(ch);
+                        nextCh();
+                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+                    } else {
+                        return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+                    }
+                } else { // ch is '.'
                     nextCh();
+                    if (isDigit(ch)) {
+                        buffer.append('.');
+                        buffer.append(digits());
+                        if (ch == 'e' || ch == 'E') {
+                            buffer.append(exponent());
+                        }
+                        if (ch == 'd' || ch == 'D') {
+                            buffer.append(ch);
+                            nextCh();
+                        }
+                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+                    }
+                    return new TokenInfo(DOT, line);
                 }
-                return new TokenInfo(INT_LITERAL, buffer.toString(), line);
             default:
                 if (isIdentifierStart(ch)) {
                     buffer = new StringBuilder();

@@ -14,6 +14,17 @@ enum TokenKind {
      * Reserved word, "boolean".
      */
     BOOLEAN("boolean"),
+    /**
+     * Reserved word, "break".
+     */
+    BREAK("break"),
+    CASE(   "case"),
+    CONTINUE("continue"),
+    DEFLT("default"),
+    DOUBLE( "double"),
+    FOR(    "for"),
+    SWITCH("switch"),
+
 
     /**
      * Reserved word, "char".
@@ -143,6 +154,13 @@ enum TokenKind {
      * Operator, "==".
      */
     EQUAL("=="),
+    MINUS_ASSIGN("-="),
+    STAR_ASSIGN("*="),
+    DIV_ASSIGN("/="),
+    REM_ASSIGN("%="),
+    GE(">="),
+    LT("<"),
+    LOR("||"),
 
     /**
      * Operator, ">".
@@ -171,7 +189,7 @@ enum TokenKind {
     /**
      * Operator, "!="
      */
-    NE("!="),
+    NOT_EQUAL("!="),
 
     /**
      * Operator, "-".
@@ -274,14 +292,15 @@ enum TokenKind {
      * String literal.
      */
     STRING_LITERAL("<STRING_LITERAL>"),
+    LONG_LITERAL("<LONG_LITERAL>"),
+    DOUBLE_LITERAL("<DOUBLE_LITERAL>"),
 
     /**
      * End of file character.
      */
     EOF("<end of file>");
 
-   
-
+ 
     // The token kind's string representation.
     private final String image;
 

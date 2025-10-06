@@ -721,7 +721,7 @@ class Parser {
             if (have(EQUAL)) {
                 lhs = new JEqualOp(line, lhs, relationalExpression());
             }
-            else if (have(NE)) {
+            else if (have(NOT_EQUAL)) {
                 lhs = new JNotEqualOp(line, lhs, relationalExpression());
             }
             else {
