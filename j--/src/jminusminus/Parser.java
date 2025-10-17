@@ -307,14 +307,11 @@ class Parser {
     private ArrayList<JStatement> forInit() {
         ArrayList<JStatement> stmts = new ArrayList<>();
         if (seeLocalVariableDeclaration()) {
-            // Parse the variable declaration BUT DO NOT consume the semicolon.
-            // The main for-loop parser will handle that.
             int line = scanner.token().line();
             Type type = type();
             ArrayList<JVariableDeclarator> vdecls = variableDeclarators(type);
             stmts.add(new JVariableDeclaration(line, vdecls));
         } else {
-            // Parse a comma-separated list of statement expressions.
             do {
                 stmts.add(statementExpression());
             } while (have(COMMA));
@@ -455,11 +452,20 @@ class Parser {
             return new JDoStatement(line, body, condition);
         } else if (have(FOR)) {
             mustBe(LPAREN);
-            ArrayList<JStatement> init = !see(SEMI) ? forInit() : new ArrayList<>();
-            mustBe(SEMI); // This now correctly consumes the semicolon for all cases.
-            JExpression condition = !see(SEMI) ? expression() : null;
+            ArrayList<JStatement> init = null;
+            if (!see(SEMI)) {
+                init = forInit();
+            }
             mustBe(SEMI);
-            ArrayList<JStatement> update = !see(RPAREN) ? forUpdate() : new ArrayList<>();
+            JExpression condition = null;
+            if (!see(SEMI)) {
+                condition = expression();
+            }
+            mustBe(SEMI);
+            ArrayList<JStatement> update = null;
+            if (!see(RPAREN)) {
+                update = forUpdate();
+            }
             mustBe(RPAREN);
             JStatement body = statement();
             return new JForStatement(line, init, condition, update, body);

@@ -1,3 +1,4 @@
+
 package jminusminus;
 
 /**
@@ -24,7 +25,6 @@ enum TokenKind {
     DOUBLE( "double"),
     FOR(    "for"),
     SWITCH("switch"),
-    LONG(  "long"),
 
 
     /**
@@ -106,6 +106,11 @@ enum TokenKind {
      * Reserved word, "return".
      */
     RETURN("return"),
+  
+    /**
+     * Reserved word, "long".
+     */
+    LONG("long"),
 
     /**
      * Reserved word, "static".

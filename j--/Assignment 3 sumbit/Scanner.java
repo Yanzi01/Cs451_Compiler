@@ -73,6 +73,14 @@ class Scanner {
         reserved.put(VOID.image(), VOID);
         reserved.put(WHILE.image(), WHILE);
         reserved.put(DO.image(),DO);
+        reserved.put(BREAK.image(), BREAK);
+        reserved.put(CASE.image(), CASE);
+        reserved.put(CONTINUE.image(), CONTINUE);
+        reserved.put(DEFLT.image(), DEFLT);
+        reserved.put(DOUBLE.image(), DOUBLE);
+        reserved.put(FOR.image(), FOR);
+        reserved.put(SWITCH.image(), SWITCH);
+        reserved.put(LONG.image(), LONG);
 
         // Prime the pump.
         nextCh();
@@ -132,8 +140,8 @@ class Scanner {
                             if (ch == '*') {
                             nextCh();
                             if (ch == '/') {
-                                nextCh();
-                                break;
+                                inComment = false;
+                                nextCh();                                  
                             }
                         } else {
                             nextCh();
@@ -161,9 +169,6 @@ class Scanner {
             case ',':
                 nextCh();
                 return new TokenInfo(COMMA, line);
-            case '.':
-                nextCh();
-                return new TokenInfo(DOT, line);
             case '[':
                 nextCh();
                 return new TokenInfo(LBRACK, line);
@@ -330,6 +335,7 @@ class Scanner {
                     buffer.append("\"");
                 }
                 return new TokenInfo(STRING_LITERAL, buffer.toString(), line);
+            case '.':
             case '0':
             case '1':
             case '2':
@@ -342,16 +348,21 @@ class Scanner {
             case '9':
                 buffer = new StringBuilder();
                 if (isDigit(ch)) {
+                    // Handles numbers that start with a digit (int, long, double)
                     buffer.append(digits());
                     if (ch == 'l' || ch == 'L') {
                         buffer.append(ch);
                         nextCh();
                         return new TokenInfo(LONG_LITERAL, buffer.toString(), line);
-                    } else if (ch == '.') {
-                        buffer.append(ch);
-                        nextCh();
-                        if (isDigit(ch)) {
-                            buffer.append(digits());
+                    } else if (ch != '.' && ch != 'e' && ch != 'E' && ch != 'd' && ch != 'D') {
+                        return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+                    } else { // It's a double
+                        if (ch == '.') {
+                            buffer.append(ch);
+                            nextCh();
+                            if (isDigit(ch)) {
+                                buffer.append(digits());
+                            }
                         }
                         if (ch == 'e' || ch == 'E') {
                             buffer.append(exponent());
@@ -361,22 +372,9 @@ class Scanner {
                             nextCh();
                         }
                         return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
-                    } else if (ch == 'e' || ch == 'E') {
-                        buffer.append(exponent());
-                        if (ch == 'd' || ch == 'D') {
-                            buffer.append(ch);
-                            nextCh();
-                        }
-                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
-                    } else if (ch == 'd' || ch == 'D') {
-                        buffer.append(ch);
-                        nextCh();
-                        return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
-                    } else {
-                        return new TokenInfo(INT_LITERAL, buffer.toString(), line);
                     }
-                } else { // ch is '.'
-                    nextCh();
+                } else { // Handles numbers that start with '.' (e.g., .0)
+                    nextCh(); 
                     if (isDigit(ch)) {
                         buffer.append('.');
                         buffer.append(digits());
@@ -389,6 +387,7 @@ class Scanner {
                         }
                         return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
                     }
+                    // It was just a DOT token
                     return new TokenInfo(DOT, line);
                 }
             default:
