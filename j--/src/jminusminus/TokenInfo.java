@@ -24,6 +24,7 @@ enum TokenKind {
     DOUBLE( "double"),
     FOR(    "for"),
     SWITCH("switch"),
+    LONG(  "long"),
 
 
     /**

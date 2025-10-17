@@ -293,6 +293,98 @@ class Parser {
         mustBe(RCURLY);
         return new JBlock(line, statements);
     }
+    
+    /**
+     * Parses the forInit part of a for statement 
+     *
+     * <pre>
+     * forInit ::= statementExpression { COMMA statementExpression }
+     * | type variableDeclarators
+     * </pre>
+     *
+     * @return a list of initializing statements.
+     */
+    private ArrayList<JStatement> forInit() {
+        ArrayList<JStatement> stmts = new ArrayList<>();
+        if (seeLocalVariableDeclaration()) {
+            // JVariableDeclaration is a JStatement.
+            stmts.add(localVariableDeclarationStatement());
+        } else {
+            do {
+                stmts.add(statementExpression());
+            } while (have(COMMA));
+        }
+        return stmts;
+    }
+
+    /**
+     * Parses the forUpdate part of a for statement
+     *
+     * <pre>
+     * forUpdate ::= statementExpression { COMMA statementExpression }
+     * </pre>
+     *
+     * @return a list of update statements.
+     */
+    private ArrayList<JStatement> forUpdate() {
+        ArrayList<JStatement> stmts = new ArrayList<>();
+        do {
+            stmts.add(statementExpression());
+        } while (have(COMMA));
+        return stmts;
+    }
+  
+    /**
+     * Parses a switch block statement group .
+     *
+     * <pre>
+     * switchBlockStatementGroup ::= switchLabel { switchLabel } { blockStatement }
+     * </pre>
+     *
+     * @return a list of statement groups.
+     */
+    private SwitchStatementGroup switchBlockStatementGroup() {
+        ArrayList<JExpression> labels = new ArrayList<>();
+        ArrayList<JStatement> stmts = new ArrayList<>();
+
+        // At least one label is required.
+        labels.add(switchLabel());
+
+        // Parse any additional labels for this same block.
+        while (see(CASE) || see(DEFLT)) {
+            labels.add(switchLabel());
+        }
+
+        // Parse the statements in the block.
+        while (!see(CASE) && !see(DEFLT) && !see(RCURLY)) {
+            stmts.add(blockStatement());
+        }
+
+        return new SwitchStatementGroup(labels, stmts);
+    }
+
+    /**
+     * Parses a switch label and returns an AST for it.
+     *
+     * <pre>
+     * switchLabel ::= CASE expression COLON
+     * | DEFAULT COLON
+     * </pre>
+     *
+     * @return an AST for a switch label.
+     */
+    private JExpression switchLabel() {
+        JExpression label = null;
+        if (have(CASE)) {
+            label = expression();
+        } else {
+            mustBe(DEFLT);
+        }
+        mustBe(COLON);
+        return label;
+    }
+
+
 
     /**
      * Parses a block statement and returns an AST for it.
@@ -356,7 +448,32 @@ class Parser {
             JExpression condition = parExpression();
             mustBe(SEMI);
             return new JDoStatement(line, body, condition);
-        } 
+        } else if (have(FOR)) {
+            mustBe(LPAREN);
+            ArrayList<JStatement> init = !see(SEMI) ? forInit() : new ArrayList<>();
+            mustBe(SEMI);
+            JExpression condition = !see(SEMI) ? expression() : null;
+            mustBe(SEMI);
+            ArrayList<JStatement> update = !see(RPAREN) ? forUpdate() : new ArrayList<>();
+            mustBe(RPAREN);
+            JStatement body = statement();
+            return new JForStatement(line, init, condition, update, body);
+        } else if (have(BREAK)){
+            mustBe(SEMI);
+            return new JBreakStatement(line);
+        } else if (have(CONTINUE)){
+            mustBe(SEMI);
+            return new JContinueStatement(line);
+        } else if (have(SWITCH)){
+            JExpression expr = parExpression();
+            mustBe(LCURLY);
+            ArrayList<SwitchStatementGroup> groups = new ArrayList<>();
+            while (!see(RCURLY) && !see(EOF)){
+                groups.add(switchBlockStatementGroup());
+            }
+            mustBe(RCURLY);
+            return new JSwitchStatement(line, expr, groups);
+        }
         else {
             // Must be a statementExpression.
             JStatement statement = statementExpression();
@@ -557,7 +674,7 @@ class Parser {
      * Parses and returns a basic type.
      *
      * <pre>
-     *   basicType ::= BOOLEAN | CHAR | INT
+     *   basicType ::= BOOLEAN | CHAR | INT | LONG | DOUBLE
      * </pre>
      *
      * @return a basic type.
@@ -569,6 +686,10 @@ class Parser {
             return Type.CHAR;
         } else if (have(INT)) {
             return Type.INT;
+        } else if (have(LONG)) { 
+            return Type.LONG;
+        } else if (have(DOUBLE)) {
+            return Type.DOUBLE;
         } else {
             reportParserError("type sought where %s found", scanner.token().image());
             return Type.ANY;
@@ -662,6 +783,14 @@ class Parser {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
+        } else if(have(MINUS_ASSIGN)){
+            return new JMinusAssignOp(line, lhs, assignmentExpression());
+        } else if(have(STAR_ASSIGN)){
+            return new JStarAssignOp(line, lhs, assignmentExpression());
+        } else if(have(DIV_ASSIGN)){
+            return new JDivAssignOp(line, lhs, assignmentExpression());
+        } else if(have(REM_ASSIGN)){
+            return new JRemAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
@@ -691,7 +820,8 @@ class Parser {
     }
     private JExpression conditionalExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalOrExpression();
+
             if (have(QUESTION)) {
                 JExpression thenPart = expression();
                 have(COLON);
@@ -702,6 +832,19 @@ class Parser {
                 return lhs;
             }
         }
+     private JExpression conditionalOrExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = conditionalAndExpression();
+        while (more) {
+            if (have(LOR)) {
+                lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+     }
 
 
     /**
@@ -746,6 +889,10 @@ class Parser {
         JExpression lhs = additiveExpression();
         if (have(GT)) {
             return new JGreaterThanOp(line, lhs, additiveExpression());
+        } else if(have(GE)){
+            return new JGreaterEqualOp(line, lhs, additiveExpression());
+        } else if (have(LT)) {
+            return new JLessThanOp(line, lhs, additiveExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, additiveExpression());
         } else if (have(INSTANCEOF)) {
@@ -825,6 +972,8 @@ class Parser {
         int line = scanner.token().line();
         if (have(INC)) {
             return new JPreIncrementOp(line, unaryExpression());
+        } else if(have(DEC)){
+            return new JPreDecrementOp(line, unaryExpression());
         } else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression());
         } else if (have(PLUS)) { 
@@ -879,6 +1028,9 @@ class Parser {
         }
         while (have(DEC)) {
             primaryExpr = new JPostDecrementOp(line, primaryExpr);
+        }
+        while (have(INC)) {
+            primaryExpr = new JPostIncrementOp(line, primaryExpr);
         }
         return primaryExpr;
     }
@@ -1068,6 +1220,10 @@ class Parser {
             return new JLiteralString(line, scanner.previousToken().image());
         } else if (have(TRUE)) {
             return new JLiteralBoolean(line, scanner.previousToken().image());
+        } else if (have(DOUBLE_LITERAL)) {
+            return new JLiteralDouble(line, scanner.previousToken().image());   
+        } else if (have(LONG_LITERAL)) {
+            return new JLiteralLong(line, scanner.previousToken().image()); 
         } else {
             reportParserError("literal sought where %s found", scanner.token().image());
             return new JWildExpression(line);
@@ -1223,7 +1379,7 @@ class Parser {
 
     // Returns true if we are looking at a basic type, and false otherwise.
     private boolean seeBasicType() {
-        return (see(BOOLEAN) || see(CHAR) || see(INT));
+        return (see(BOOLEAN) || see(CHAR) || see(INT)) || see(LONG) || see(DOUBLE);
     }
 
     // Returns true if we are looking at a reference type, and false otherwise.
@@ -1232,7 +1388,7 @@ class Parser {
             return true;
         } else {
             scanner.recordPosition();
-            if (have(BOOLEAN) || have(CHAR) || have(INT)) {
+            if (have(BOOLEAN) || have(CHAR) || have(INT) || have(LONG) || have(DOUBLE)) {
                 if (have(LBRACK) && see(RBRACK)) {
                     scanner.returnToPosition();
                     return true;
