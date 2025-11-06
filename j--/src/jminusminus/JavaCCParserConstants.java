@@ -17,122 +17,170 @@ public interface JavaCCParserConstants {
   /** RegularExpression Id. */
   int COMMENT = 8;
   /** RegularExpression Id. */
-  int ABSTRACT = 9;
+  int ABSTRACT = 12;
   /** RegularExpression Id. */
-  int BOOLEAN = 10;
+  int BOOLEAN = 13;
   /** RegularExpression Id. */
-  int CHAR = 11;
+  int BREAK = 14;
   /** RegularExpression Id. */
-  int CLASS = 12;
+  int CASE = 15;
   /** RegularExpression Id. */
-  int ELSE = 13;
+  int CHAR = 16;
   /** RegularExpression Id. */
-  int EXTENDS = 14;
+  int CLASS = 17;
   /** RegularExpression Id. */
-  int FALSE = 15;
+  int CONTINUE = 18;
   /** RegularExpression Id. */
-  int IF = 16;
+  int DEFLT = 19;
   /** RegularExpression Id. */
-  int IMPORT = 17;
+  int DO = 20;
   /** RegularExpression Id. */
-  int INSTANCEOF = 18;
+  int DOUBLE = 21;
   /** RegularExpression Id. */
-  int INT = 19;
+  int ELSE = 22;
   /** RegularExpression Id. */
-  int NEW = 20;
+  int EXTENDS = 23;
   /** RegularExpression Id. */
-  int NULL = 21;
+  int FALSE = 24;
   /** RegularExpression Id. */
-  int PACKAGE = 22;
+  int FOR = 25;
   /** RegularExpression Id. */
-  int PRIVATE = 23;
+  int IF = 26;
   /** RegularExpression Id. */
-  int PROTECTED = 24;
+  int IMPORT = 27;
   /** RegularExpression Id. */
-  int PUBLIC = 25;
+  int INSTANCEOF = 28;
   /** RegularExpression Id. */
-  int RETURN = 26;
+  int INT = 29;
   /** RegularExpression Id. */
-  int STATIC = 27;
+  int LONG = 30;
   /** RegularExpression Id. */
-  int SUPER = 28;
+  int NEW = 31;
   /** RegularExpression Id. */
-  int THIS = 29;
+  int NULL = 32;
   /** RegularExpression Id. */
-  int TRUE = 30;
+  int PACKAGE = 33;
   /** RegularExpression Id. */
-  int VOID = 31;
+  int PRIVATE = 34;
   /** RegularExpression Id. */
-  int WHILE = 32;
+  int PROTECTED = 35;
   /** RegularExpression Id. */
-  int COMMA = 33;
+  int PUBLIC = 36;
   /** RegularExpression Id. */
-  int DOT = 34;
+  int RETURN = 37;
   /** RegularExpression Id. */
-  int LBRACK = 35;
+  int STATIC = 38;
   /** RegularExpression Id. */
-  int LCURLY = 36;
+  int SUPER = 39;
   /** RegularExpression Id. */
-  int LPAREN = 37;
+  int SWITCH = 40;
   /** RegularExpression Id. */
-  int RPAREN = 38;
+  int THIS = 41;
   /** RegularExpression Id. */
-  int RBRACK = 39;
+  int TRUE = 42;
   /** RegularExpression Id. */
-  int RCURLY = 40;
+  int VOID = 43;
   /** RegularExpression Id. */
-  int SEMI = 41;
+  int WHILE = 44;
   /** RegularExpression Id. */
-  int ASSIGN = 42;
+  int COMMA = 45;
   /** RegularExpression Id. */
-  int DEC = 43;
+  int DOT = 46;
   /** RegularExpression Id. */
-  int EQUAL = 44;
+  int LBRACK = 47;
   /** RegularExpression Id. */
-  int GT = 45;
+  int LCURLY = 48;
   /** RegularExpression Id. */
-  int INC = 46;
+  int LPAREN = 49;
   /** RegularExpression Id. */
-  int LAND = 47;
+  int RPAREN = 50;
   /** RegularExpression Id. */
-  int LE = 48;
+  int RBRACK = 51;
   /** RegularExpression Id. */
-  int LNOT = 49;
+  int RCURLY = 52;
   /** RegularExpression Id. */
-  int MINUS = 50;
+  int SEMI = 53;
   /** RegularExpression Id. */
-  int PLUS = 51;
+  int ASSIGN = 54;
   /** RegularExpression Id. */
-  int PLUS_ASSIGN = 52;
+  int DEC = 55;
   /** RegularExpression Id. */
-  int STAR = 53;
+  int EQUAL = 56;
   /** RegularExpression Id. */
-  int DIV = 54;
+  int GT = 57;
   /** RegularExpression Id. */
-  int REM = 55;
+  int INC = 58;
   /** RegularExpression Id. */
-  int IDENTIFIER = 56;
+  int LAND = 59;
   /** RegularExpression Id. */
-  int LETTER = 57;
+  int LE = 60;
   /** RegularExpression Id. */
-  int DIGIT = 58;
+  int LNOT = 61;
   /** RegularExpression Id. */
-  int INT_LITERAL = 59;
+  int MINUS = 62;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 60;
+  int PLUS = 63;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 61;
+  int PLUS_ASSIGN = 64;
   /** RegularExpression Id. */
-  int DIGITS = 62;
+  int STAR = 65;
   /** RegularExpression Id. */
-  int ESC = 63;
+  int DIV = 66;
   /** RegularExpression Id. */
-  int ERROR = 64;
+  int REM = 67;
+  /** RegularExpression Id. */
+  int QUESTION = 68;
+  /** RegularExpression Id. */
+  int COLON = 69;
+  /** RegularExpression Id. */
+  int MINUS_ASSIGN = 70;
+  /** RegularExpression Id. */
+  int STAR_ASSIGN = 71;
+  /** RegularExpression Id. */
+  int DIV_ASSIGN = 72;
+  /** RegularExpression Id. */
+  int REM_ASSIGN = 73;
+  /** RegularExpression Id. */
+  int NOT_EQUAL = 74;
+  /** RegularExpression Id. */
+  int GE = 75;
+  /** RegularExpression Id. */
+  int LT = 76;
+  /** RegularExpression Id. */
+  int LOR = 77;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 78;
+  /** RegularExpression Id. */
+  int LETTER = 79;
+  /** RegularExpression Id. */
+  int DIGIT = 80;
+  /** RegularExpression Id. */
+  int EXPONENT = 81;
+  /** RegularExpression Id. */
+  int SUFFIX = 82;
+  /** RegularExpression Id. */
+  int DOUBLE_LITERAL = 83;
+  /** RegularExpression Id. */
+  int LONG_LITERAL = 84;
+  /** RegularExpression Id. */
+  int INT_LITERAL = 85;
+  /** RegularExpression Id. */
+  int CHAR_LITERAL = 86;
+  /** RegularExpression Id. */
+  int STRING_LITERAL = 87;
+  /** RegularExpression Id. */
+  int DIGITS = 88;
+  /** RegularExpression Id. */
+  int ESC = 89;
+  /** RegularExpression Id. */
+  int ERROR = 90;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
   int IN_SINGLE_LINE_COMMENT = 1;
+  /** Lexical state. */
+  int IN_MULTI_LINE_COMMENT = 2;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -145,17 +193,28 @@ public interface JavaCCParserConstants {
     "\"//\"",
     "<END_COMMENT>",
     "<COMMENT>",
+    "\"/*\"",
+    "\"*/\"",
+    "<token of kind 11>",
     "\"abstract\"",
     "\"boolean\"",
+    "\"break\"",
+    "\"case\"",
     "\"char\"",
     "\"class\"",
+    "\"continue\"",
+    "\"default\"",
+    "\"do\"",
+    "\"double\"",
     "\"else\"",
     "\"extends\"",
     "\"false\"",
+    "\"for\"",
     "\"if\"",
     "\"import\"",
     "\"instanceof\"",
     "\"int\"",
+    "\"long\"",
     "\"new\"",
     "\"null\"",
     "\"package\"",
@@ -165,6 +224,7 @@ public interface JavaCCParserConstants {
     "\"return\"",
     "\"static\"",
     "\"super\"",
+    "\"switch\"",
     "\"this\"",
     "\"true\"",
     "\"void\"",
@@ -192,9 +252,23 @@ public interface JavaCCParserConstants {
     "\"*\"",
     "\"/\"",
     "\"%\"",
+    "\"?\"",
+    "\":\"",
+    "\"-=\"",
+    "\"*=\"",
+    "\"/=\"",
+    "\"%=\"",
+    "\"!=\"",
+    "\">=\"",
+    "\"<\"",
+    "\"||\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
+    "<EXPONENT>",
+    "<SUFFIX>",
+    "<DOUBLE_LITERAL>",
+    "<LONG_LITERAL>",
     "<INT_LITERAL>",
     "<CHAR_LITERAL>",
     "<STRING_LITERAL>",

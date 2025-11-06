@@ -4,85 +4,101 @@ you managed to solve those issues.
 
 [Problem 1 (Multiline Comment)]
 
-Goal: ...
+Goal: Scanner when scan /* ... */, it would skip over /* ... */
 
-Approach: ...
+Approach: I just copied the logic for the single-line comment. I added a new SKIP rule for /* that transitions to a new state called IN_MULTI_LINE_COMMENT. In that state, I added a rule to SKIP */ and go back to DEFLT, and another rule to SKIP everything else (~[]) so it just skip the comment.
 
 [Problem 2 (Reserved Words)]
 
-Goal: ...
-
-Approach: ...
+Goal: Add new reserved keywords to the language, break case continue default do double for long switch
+Approach: I found the TOKEN block for reserved words. Then added all the new words as new token definitions, like <FOR: "for">. 
 
 [Problem 3 (Operators: Scanner)]
 
-Goal: ...
+Goal: Make the scanner recognize all the new operator, / % ? : -= *= /= %= != >= < ||
 
-Approach: ...
+Approach: Same as the reserved words. I found the TOKEN block for operators and then just added all the new ones.
 
 [Problem 4 (Literals)]
 
-Goal: ...
+Goal: Add support for long and double literals.
 
-Approach: ...
+Approach: I first define the helper rules (#EXPONENT, #SUFFIX) in the Literals token block. Then I defined the LONG_LITERAL and DOUBLE_LITERAL tokens.
+
+Issues: I originally put INT_LITERAL before LONG_LITERAL. This meant 123L was being read as the integer 123 and then a weird L token, which was wrong. I had to move LONG_LITERAL and DOUBLE_LITERAL before INT_LITERAL so the scanner checks for the more specific patterns first.
 
 [Problem 5 (Operators: Parser)]
 
-Goal: ...
+Goal: Make the parser actually understand the new operators in the grammar
 
-Approach: ...
+Approach: I  modify all the expression methods:
 
+multiplicativeExpression() for / and %.
+
+assignmentExpression() for +=, -=, *=, /=, %=.
+
+equalityExpression() for !=.
+
+relationalExpression() for >= and <.
+
+unaryExpression() for unary +, pre---.
+
+postfixExpression() for post-++. I also had to create a whole new method, conditionalOrExpression(), for the || operator and plug it into the expression hierarchy (by making assignmentExpression call it).
+
+Issues: I missed a few things at first, forgetting to update assignmentExpression to call conditionalOrExpression. But mostly it was just a lot of "find the method, add the new token, create the new AST node" over and over.
 [Problem 6 (Long and Double Basic Types)]
 
-Goal: ...
+Goal: Make the parser recognize long and double as data types, not just literal values.
 
-Approach: ...
+Approach: I added <LONG> and <DOUBLE> to the basicType() method. Then I updated the literal() method to create JLiteralLong and JLiteralDouble AST nodes when it sees the new literal tokens.
 
 [Problem 7 (Conditional Expression)]
 
-Goal: ...
+Goal: Add the ternary operator (condition ? true_val : false_val).
 
-Approach: ...
+Approach: I first create a new method conditionalExpression(). This new method parses a conditionalOrExpression and then checks for an optional ? ... : ... part.
+
 
 [Problem 8 (Do Statement)]
 
-Goal: ...
+Goal: I added a new branch to the statement() method. It looks for <DO>, then parses a statement() (for the body), then <WHILE>, then parExpression(), and finally the <SEMI>.
 
-Approach: ...
+Approach: I just added a new branch to the statement() method. It looks for <DO>, then parses a statement() (for the body), then <WHILE>, then parExpression(), and finally the <SEMI>.
+
+Issue: I forgot to end with SEMI. The build failed, took some time to figure out to add SEMI at the end.
 
 [Problem 9 (For Statement)]
 
-Goal: ...
+Goal: Add for() loops.
 
-Approach: ...
+Approach: I add two new helper methods: forInit() (to handle both int i=0 and i=0) and forUpdate() (to handle multiple i++ style expressions). Then I added a new branch to statement() that parses <FOR> ( [forInit] ; [condition] ; [forUpdate] ) statement.
 
 [Problem 10 (Break Statement)]
 
-Goal: ...
+Goal: Add the break statement.
 
-Approach: ...
+Approach: I added a new branch to statement() that looks for <BREAK>, then <SEMI>, and creates a JBreakStatement.
 
 [Problem 11 (Continue Statement)]
 
-Goal: ...
+Goal: Add the continue statement.
 
-Approach: ...
+Approach: I just copied the break statement's code, and changed <BREAK> to <CONTINUE> and JBreakStatement to JContinueStatement.
 
 [Problem 12 (Switch Statement)]
 
-Goal: ...
+Goal: Add switch statements, with case and default labels.
 
-Approach: ...
+Approach: I added two helper methods: switchLabel() (to parse case ...: or default:) and switchBlockStatementGroup() (to handle multiple labels for one block and all the statements in that block). Then I updated statement() to parse the <SWITCH> (expr) { ... }, and inside the {} it just loops on switchBlockStatementGroup() until it hits the "}" .
 
 2. Did you receive any help? List the sources along with a short description 
 of the help received.
 
 Source                               Help Received
 ------                               -------------
-
-...                                  ...
+                               
 
 3. List any other comments here. Feel free to provide any feedback on how much 
 you learned from doing the assignment, and whether you enjoyed doing it.
 
-...
+
